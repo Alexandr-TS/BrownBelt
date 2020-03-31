@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/Admin/Documents/Code/Samples C++/CourseraBrownBelt/CMakeProject1/SetIteratorNext
+# Install script for directory: C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/HashPoint
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/Admin/Documents/Code/Samples C++/CourseraBrownBelt/CMakeProject1/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/Admin/Source/Repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

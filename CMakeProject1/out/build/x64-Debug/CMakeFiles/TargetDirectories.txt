@@ -1,5 +1,5 @@
-C:/Users/Admin/Documents/Code/Samples C++/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/CMakeFiles/edit_cache.dir
-C:/Users/Admin/Documents/Code/Samples C++/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/Admin/Documents/Code/Samples C++/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SetIteratorNext/CMakeFiles/CMakeProject1.dir
-C:/Users/Admin/Documents/Code/Samples C++/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SetIteratorNext/CMakeFiles/edit_cache.dir
-C:/Users/Admin/Documents/Code/Samples C++/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SetIteratorNext/CMakeFiles/rebuild_cache.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/HashPoint/CMakeFiles/CMakeProject1.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/HashPoint/CMakeFiles/edit_cache.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/HashPoint/CMakeFiles/rebuild_cache.dir

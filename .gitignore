@@ -3,3 +3,12 @@
 ################################################################################
 
 *.sqlite
+*.db
+*.opendb
+/.vs
+*.json
+*.obj
+*.exe
+*.pdb
+/CMakeProject1/out/build/x64-Debug/HashPoint/CMakeFiles/CMakeProject1.dir
+*.ilk

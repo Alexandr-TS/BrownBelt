@@ -1,0 +1,23 @@
+# ninja log v5
+5	3187	607336932	PriorityCollection2/CMakeFiles/CMakeProject1.dir/priority_collection_2.cpp.obj	3ce43dfd9ebfb8d0
+3194	5638	607336935	PriorityCollection2/CMakeProject1.exe	37d78b65a26a6488
+5	4859	607337112	PriorityCollection2/CMakeFiles/CMakeProject1.dir/priority_collection_2.cpp.obj	3ce43dfd9ebfb8d0
+4865	5865	607337112	PriorityCollection2/CMakeProject1.exe	37d78b65a26a6488
+4	3686	607345925	HashSet/CMakeFiles/CMakeProject1.dir/hash_set.cpp.obj	23394e1023192e1f
+3715	6355	607345927	HashSet/CMakeProject1.exe	b3a9813f8bfdb5fd
+4	3492	607346037	HashSet/CMakeFiles/CMakeProject1.dir/hash_set.cpp.obj	23394e1023192e1f
+3501	4493	607346038	HashSet/CMakeProject1.exe	b3a9813f8bfdb5fd
+5	3841	607346669	HashSet/CMakeFiles/CMakeProject1.dir/hash_set.cpp.obj	23394e1023192e1f
+3850	5475	607346671	HashSet/CMakeProject1.exe	b3a9813f8bfdb5fd
+4	3035	607347127	HashSet/CMakeFiles/CMakeProject1.dir/hash_set.cpp.obj	23394e1023192e1f
+3042	4257	607347128	HashSet/CMakeProject1.exe	b3a9813f8bfdb5fd
+4	3436	607347455	HashSet/CMakeFiles/CMakeProject1.dir/hash_set.cpp.obj	23394e1023192e1f
+3444	5062	607347456	HashSet/CMakeProject1.exe	b3a9813f8bfdb5fd
+4	3586	607347645	HashSet/CMakeFiles/CMakeProject1.dir/hash_set.cpp.obj	23394e1023192e1f
+3592	4807	607347646	HashSet/CMakeProject1.exe	b3a9813f8bfdb5fd
+3	3470	607347747	HashSet/CMakeFiles/CMakeProject1.dir/hash_set.cpp.obj	23394e1023192e1f
+3476	4684	607347748	HashSet/CMakeProject1.exe	b3a9813f8bfdb5fd
+4	4727	607352044	SetIteratorNext/CMakeFiles/CMakeProject1.dir/set_iterator_next.cpp.obj	ccdf219fc0607b43
+4733	7330	607352046	SetIteratorNext/CMakeProject1.exe	607dfa2f5d3cc935
+3	1906	607352282	SetIteratorNext/CMakeFiles/CMakeProject1.dir/set_iterator_next.cpp.obj	ccdf219fc0607b43
+1909	3098	607352283	SetIteratorNext/CMakeProject1.exe	607dfa2f5d3cc935

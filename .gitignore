@@ -11,5 +11,4 @@
 *.exe
 *.pdb
 /CMakeProject1/out/build/x64-Debug/HashPoint/CMakeFiles/CMakeProject1.dir
-/CMakeProject1/out/build/x64-Debug
 *.ilk

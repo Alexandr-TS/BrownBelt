@@ -1,5 +1,5 @@
 C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/CMakeFiles/edit_cache.dir
 C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SecondaryIndex/CMakeFiles/CMakeProject1.dir
-C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SecondaryIndex/CMakeFiles/edit_cache.dir
-C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SecondaryIndex/CMakeFiles/rebuild_cache.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SpendingsJSON/CMakeFiles/CMakeProject1.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SpendingsJSON/CMakeFiles/edit_cache.dir
+C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/SpendingsJSON/CMakeFiles/rebuild_cache.dir

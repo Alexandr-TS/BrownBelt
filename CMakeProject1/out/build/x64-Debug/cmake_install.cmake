@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/Collide/cmake_install.cmake")
+  include("C:/Users/Admin/source/repos/Alexandr-TS/CourseraBrownBelt/CMakeProject1/out/build/x64-Debug/CommentServer/cmake_install.cmake")
 
 endif()
 

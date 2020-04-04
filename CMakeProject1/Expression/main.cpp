@@ -28,8 +28,6 @@ public:
         return to_string(value);
     }
 
-    virtual ~ExpressionValue() = default;
-
 private:
     int value;
 };
@@ -53,8 +51,6 @@ public:
         return "(" + str_left + ")+(" + str_right + ")";
     }
 
-    virtual ~ExpressionSum() = default;
-
 private:
     unique_ptr<Expression> ptr_left, ptr_right;
 };
@@ -77,8 +73,6 @@ public:
         auto str_right = ptr_right->ToString();
         return "(" + str_left + ")*(" + str_right + ")";
     }
-
-    virtual ~ExpressionMult() = default;
 
 private:
     unique_ptr<Expression> ptr_left, ptr_right;

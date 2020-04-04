@@ -10,4 +10,4 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Включите подпроекты.
-add_subdirectory ("Polynomial")
+add_subdirectory ("ObjectPool")

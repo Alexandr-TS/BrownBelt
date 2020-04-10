@@ -111,18 +111,25 @@ namespace Json {
 
     void Node::Print(ostream& os) const {
         if (holds_alternative<double>(*this)) {
-            os << fixed << setprecision(6) << get<double>(*this) << "\n";
+            double value = get<double>(*this);
+            if (abs(static_cast<int>(value) - value) < 1e-8) {
+                os << static_cast<int>(value);
+            }
+            else {
+                os << fixed << setprecision(6) << get<double>(*this);
+            }
         }
         else if (holds_alternative<string>(*this)) {
-            os << get<string>(*this) << "\n";
+            os << "\"" << get<string>(*this) << "\"";
         }
         else if (holds_alternative<vector<Node>>(*this)) {
             os << "[\n";
             for (size_t i = 0; i < (*this).AsArray().size(); ++i) {
                 (*this).AsArray()[i].Print(os);
                 if (i + 1 < (*this).AsArray().size()) {
-                    os << ",\n";
+                    os << ",";
                 }
+                os << "\n";
             }
             os << "]";
         }

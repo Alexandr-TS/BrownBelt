@@ -27,6 +27,8 @@ RequestHolder CreateRequestHolder(Request::ERequestType type) {
 			return make_unique<ReadBusInfoRequest>();
 		case Request::ERequestType::QUERY_STOP:
 			return make_unique<ReadStopInfoRequest>();
+		case Request::ERequestType::QUERY_ROUTE:
+			return make_unique<ReadRouteInfoRequest>();
 		default:
 			throw "undefined type";
 	}
@@ -67,7 +69,7 @@ pair<BusManagerSettings, vector<RequestHolder>> ReadAllRequestsJson() {
 	auto document = Load(cin);
 	vector<RequestHolder> requests;
 
-	assert((int)document.GetRoot().AsMap().size() == 2);
+	assert((int)document.GetRoot().AsMap().size() == 3);
 
 	const auto& modify_requests = document.GetRoot().AsMap().at("base_requests");
 	ReadRequestsJson(requests, modify_requests, ModifyRequestTypeByString);

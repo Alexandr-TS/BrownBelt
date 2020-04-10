@@ -231,14 +231,14 @@ public:
 			auto edge_id = RouteBuilder->GetRouteEdge(result.id, i);
 			auto wait_node_map = map<string, Node>();
 			wait_node_map["time"] = Node(static_cast<double>(Settings.BusWaitTime));
-			wait_node_map["type"] = Node("wait"s);
+			wait_node_map["type"] = Node("Wait"s);
 			wait_node_map["stop_name"] = Node(Edges[edge_id].StopFrom);
 			node_map_items.push_back(Node(wait_node_map));
 
 			auto ride_node_map = map<string, Node>();
 			ride_node_map["bus"] = Node(Edges[edge_id].BusName);
-			ride_node_map["type"] = Node("bus"s);
-			ride_node_map["time"] = Node(Edges[edge_id].Weight);
+			ride_node_map["type"] = Node("Bus"s);
+			ride_node_map["time"] = Node(Edges[edge_id].Weight - Settings.BusWaitTime);
 			ride_node_map["span_count"] = Node(Edges[edge_id].SpanCount);
 			node_map_items.push_back(Node(ride_node_map));
 		}
@@ -254,7 +254,7 @@ public:
 			StopIdByName[name] = cur_stop_idx++;
 		}
 
-		DirectedWeightedGraph<double> graph(Stops.size());
+		GraphPtr = make_shared<DirectedWeightedGraph<double>>(Stops.size());
 
 		map<pair<string, string>, tuple<double, string, int>> best_bus_by_2_stops;
 
@@ -281,11 +281,11 @@ public:
 			const auto& [from_stop, to_stop] = el.first;
 			const auto& [dist, bus_name, span_count] = el.second;
 			Edge<double> edge{ StopIdByName[from_stop], StopIdByName[to_stop], dist };
-			auto edge_id = graph.AddEdge(edge);
+			auto edge_id = GraphPtr->AddEdge(edge);
 			Edges.push_back({ dist, from_stop, to_stop, bus_name, edge_id, span_count });
 		}
 
-		RouteBuilder = make_unique<Graph::Router<double>>(Router(graph));
+		RouteBuilder = make_unique<Graph::Router<double>>(*GraphPtr);
 	}
 
 private:
@@ -301,6 +301,7 @@ private:
 	vector<EdgeInfo> Edges;
 	unordered_map<string, size_t> StopIdByName;
 	unique_ptr<Graph::Router<double>> RouteBuilder;
+	shared_ptr<Graph::DirectedWeightedGraph<double>> GraphPtr;
 
 	unordered_map<string, Stop> Stops;
 	unordered_map<string, Bus> Buses;

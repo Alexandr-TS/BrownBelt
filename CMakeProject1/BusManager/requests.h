@@ -206,6 +206,7 @@ public:
 
 	RouteInfoResponse Process(BusManager& manager) const override {
 		auto response = manager.GetRouteResponse(StopFrom, StopTo);
+		response.Info.AddNodeToMap("request_id", Node(static_cast<double>(Request_id)));
 		response.SetRequestId(Request_id);
 		return response;
 	}
@@ -217,6 +218,7 @@ public:
 	void ReadInfo(const Node& node) override {
 		StopFrom = node.AsMap().at("from").AsString();
 		StopTo = node.AsMap().at("to").AsString();
+		Request_id = static_cast<int>(node.AsMap().at("id").AsDouble());
 	}
 
 private:

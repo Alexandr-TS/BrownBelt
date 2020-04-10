@@ -27,6 +27,10 @@ namespace Json {
         const auto& AsString() const {
             return std::get<std::string>(*this);
         }
+
+        void AddNodeToMap(const std::string& key, const Node& node) {
+            std::get<std::map<std::string, Node>>(*this)[key] = node;
+        }
         
         void Print(std::ostream& os) const;
     };

@@ -124,6 +124,9 @@ public:
 		if (node_map.at("is_roundtrip").AsDouble() < 0.5) { // false
 			vector<string> reversed_path{ next(BusStopNames.rbegin()), BusStopNames.rend() };
 			copy(reversed_path.begin(), reversed_path.end(), back_inserter(BusStopNames));
+
+			vector<string> revs{ BusStopNames.rbegin(), BusStopNames.rend() };
+			assert(revs == BusStopNames);
 		}
 	}
 

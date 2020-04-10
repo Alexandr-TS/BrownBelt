@@ -1,6 +1,7 @@
 #include "json.h"
 #include <cassert>
 #include <iomanip>
+#include <cmath>
 
 using namespace std;
 
@@ -47,6 +48,12 @@ namespace Json {
             return Node(0.0);
         }
 
+        double sign = 1.0;
+        if (input.peek() == '-') {
+            input.get();
+            sign = -1.0;
+        }
+
         while (isdigit(input.peek())) {
             result *= 10;
             result += static_cast<double>(input.get() - static_cast<int>('0'));
@@ -60,6 +67,8 @@ namespace Json {
                 result += coef * static_cast<double>(input.get() - static_cast<int>('0'));
 			}
         }
+
+        result *= sign;
 
         return Node(result);
     }
@@ -113,7 +122,7 @@ namespace Json {
         if (holds_alternative<double>(*this)) {
             double value = get<double>(*this);
             if (abs(static_cast<int>(value) - value) < 1e-8) {
-                os << static_cast<int>(value);
+                os << static_cast<int>(round(value));
             }
             else {
                 os << fixed << setprecision(6) << get<double>(*this);

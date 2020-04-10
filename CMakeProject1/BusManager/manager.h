@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -107,6 +109,15 @@ struct Bus {
 					RouteLength += distances_between_stops.at(path[i - 1]).at(path[i]);
 				}
 				else {
+					string msg;
+					for (const auto& el : distances_between_stops) {
+						msg += el.first + ":\n";
+						for (const auto& e : el.second) {
+							msg += "  " + e.first + ":" + to_string(e.second) + "\n";
+						}
+					}
+
+					//throw runtime_error("error: " + msg);
 					RouteLength += geo_dist;
 				}
 			}
@@ -157,6 +168,7 @@ public:
 	void AddBus(const string& name, const vector<string>& path) {
 		Buses[name] = Bus(path, Stops, DistancesBetweenStops);
 		for (const auto& stop_name : path) {
+			assert(Stops.count(stop_name));
 			Stops[stop_name].BusesNames.insert(name);
 		}
 	}

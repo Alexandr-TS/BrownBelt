@@ -65,6 +65,8 @@ vector<RequestHolder> ReadAllRequestsJson() {
 	auto document = Load(cin);
 	vector<RequestHolder> requests;
 
+	assert((int)document.GetRoot().AsMap().size() == 2);
+
 	const auto& modify_requests = document.GetRoot().AsMap().at("base_requests");
 	ReadRequestsJson(requests, modify_requests, ModifyRequestTypeByString);
 
@@ -183,8 +185,8 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 }
 
 int main() {
-	FILE* file;
-	freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
+	//FILE* file;
+	//freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
 	const auto requests = ReadAllRequestsJson();
 	const auto responses = GetResponses(requests);
 	PrintResponsesJson(responses);

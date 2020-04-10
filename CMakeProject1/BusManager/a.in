@@ -5,9 +5,9 @@
       "road_distances": {
         "Marushkino": 3900
       },
-      "longitude": 37.20829,
+      "longitude": -37.20829,
       "name": "Tolstopaltsevo",
-      "latitude": 55.611087
+      "latitude": -55.611087
     },
     {
       "type": "Stop",

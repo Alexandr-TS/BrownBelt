@@ -52,6 +52,28 @@ vector<RequestHolder> ReadAllRequestsCin() {
 	return requests;
 }
 
+void ReadRequestsJson(vector<RequestHolder>& requests, const Node& node,
+	const unordered_map<string, Request::ERequestType>& RequestTypeByString) {
+	for (const auto& query_node : node.AsArray()) {
+		auto type = RequestTypeByString.at(query_node.AsMap().at("type").AsString());
+		requests.push_back(CreateRequestHolder(type));
+		requests.back()->ReadInfo(query_node);
+	}
+}
+
+vector<RequestHolder> ReadAllRequestsJson() {
+	auto document = Load(cin);
+	vector<RequestHolder> requests;
+
+	const auto& modify_requests = document.GetRoot().AsMap().at("base_requests");
+	ReadRequestsJson(requests, modify_requests, ModifyRequestTypeByString);
+
+	const auto& read_requests = document.GetRoot().AsMap().at("stat_requests");
+	ReadRequestsJson(requests, read_requests, ReadRequestTypeByString);
+
+	return requests;
+}
+
 vector<unique_ptr<Response>> GetResponses(const vector<RequestHolder>& requests) {
 	BusManager manager;
 	vector<unique_ptr<Response>> responses;
@@ -124,7 +146,7 @@ void PrintResponsesCout(const vector<unique_ptr<Response>>& responses) {
 int main() {
 	FILE* file;
 	freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
-	const auto requests = ReadAllRequestsCin();
+	const auto requests = ReadAllRequestsJson();
 	const auto responses = GetResponses(requests);
 	PrintResponsesCout(responses);
 }

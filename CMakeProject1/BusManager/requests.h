@@ -76,8 +76,15 @@ public:
 		}
 	}
 
-	void ReadInfo(const Node& node) {
-		
+	void ReadInfo(const Node& node) override {
+		const auto& node_map = node.AsMap();
+		StopLocation = { node_map.at("latitude").AsDouble(), node_map.at("longitude").AsDouble() };
+		Name = node_map.at("name").AsString();
+		if (node_map.count("road_distances")) {
+			for (const auto& [stop_name, dist] : node_map.at("road_distances").AsMap()) {
+				DistsToStops[stop_name] = dist.AsDouble();
+			}
+		}
 	}
 
 private:
@@ -104,6 +111,19 @@ public:
 		copy(info.begin() + 1, info.end(), back_inserter(BusStopNames));
 		if (!is_cycle) {
 			copy(info.rbegin() + 1, info.rend() - 1, back_inserter(BusStopNames));
+		}
+	}
+
+	void ReadInfo(const Node& node) override {
+		const auto& node_map = node.AsMap();
+		Name = node_map.at("name").AsString();
+		const auto& stop_nodes = node_map.at("stops").AsArray();
+		for (const auto& stop_node : stop_nodes) {
+			BusStopNames.push_back(stop_node.AsString());
+		}
+		if (node_map.at("is_roundtrip").AsDouble() < 0.5) { // false
+			vector<string> reversed_path{ BusStopNames.begin(), prev(BusStopNames.end()) };
+			copy(reversed_path.begin(), reversed_path.end(), back_inserter(BusStopNames));
 		}
 	}
 
@@ -135,6 +155,10 @@ public:
 		BusName = info[0];
 	}
 
+	void ReadInfo(const Node& node) override {
+		BusName = node.AsMap().at("name").AsString();
+	}
+
 private:
 	string BusName;
 };
@@ -153,6 +177,10 @@ public:
 		auto info = StringUtils::SplitString(input);
 		assert(info.size() == 1);
 		StopName = info[0];
+	}
+
+	void ReadInfo(const Node& node) override {
+		StopName = node.AsMap().at("name").AsString();
 	}
 
 private:

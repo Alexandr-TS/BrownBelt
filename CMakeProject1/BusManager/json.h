@@ -3,6 +3,7 @@
 #include <istream>
 #include <map>
 #include <string>
+#include <sstream>
 #include <variant>
 #include <vector>
 
@@ -26,6 +27,8 @@ namespace Json {
         const auto& AsString() const {
             return std::get<std::string>(*this);
         }
+        
+        void Print(std::ostream& os) const;
     };
 
     class Document {

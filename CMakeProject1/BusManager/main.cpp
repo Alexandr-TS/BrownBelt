@@ -143,10 +143,49 @@ void PrintResponsesCout(const vector<unique_ptr<Response>>& responses) {
 	}
 }
 
+void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
+	auto result_vec = vector<Node>();
+
+	for (const auto& response_ptr: responses) {
+		if (response_ptr->Type == Response::EResponseType::BUS_INFO) {
+			const auto& response = static_cast<const BusInfoResponse&>(*response_ptr);
+			auto cur_node = map<string, Node>{};
+			if (response.Info) {
+				cur_node["stop_count"] = Node(static_cast<double>(response.Info.value().CntStops));
+				cur_node["unique_stop_count"] = Node(static_cast<double>(response.Info.value().UniqueStops));
+				cur_node["curvature"] = Node(response.Info.value().Curvature);
+				cur_node["route_length"] = Node(response.Info.value().PathLength);
+			}
+			else {
+				cur_node["error_message"] = Node("not found"s);
+			}
+			result_vec.push_back(Node(cur_node));
+		}
+		else {
+			const auto& response = static_cast<const StopInfoResponse&>(*response_ptr);
+			auto cur_node = map<string, Node>{};
+			if (response.Info) {
+				auto buses_vector = vector<Node>();
+				for (const auto& bus_name : response.Info.value().Buses) {
+					buses_vector.push_back(Node(bus_name));
+				}
+				cur_node["buses"] = buses_vector;
+			}
+			else {
+				cur_node["error_message"] = Node("not found"s);
+			}
+			result_vec.push_back(Node(cur_node));
+		}
+	}
+
+	auto result_node = Node(result_vec);
+	result_node.Print(cout);
+}
+
 int main() {
 	FILE* file;
 	freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
 	const auto requests = ReadAllRequestsJson();
 	const auto responses = GetResponses(requests);
-	PrintResponsesCout(responses);
+	PrintResponsesJson(responses);
 }

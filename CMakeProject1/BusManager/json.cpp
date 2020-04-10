@@ -1,5 +1,6 @@
 #include "json.h"
 #include <cassert>
+#include <iomanip>
 
 using namespace std;
 
@@ -10,7 +11,7 @@ namespace Json {
     const Node& Document::GetRoot() const {
         return root;
     }
-
+        
     Node LoadNode(istream& input);
 
     Node LoadArray(istream& input) {
@@ -106,5 +107,37 @@ namespace Json {
 
     Document Load(istream& input) {
         return Document{ LoadNode(input) };
+    }
+
+    void Node::Print(ostream& os) const {
+        if (holds_alternative<double>(*this)) {
+            os << fixed << setprecision(6) << get<double>(*this) << "\n";
+        }
+        else if (holds_alternative<string>(*this)) {
+            os << get<string>(*this) << "\n";
+        }
+        else if (holds_alternative<vector<Node>>(*this)) {
+            os << "[\n";
+            for (size_t i = 0; i < (*this).AsArray().size(); ++i) {
+                (*this).AsArray()[i].Print(os);
+                if (i + 1 < (*this).AsArray().size()) {
+                    os << ",\n";
+                }
+            }
+            os << "]";
+        }
+        else if (holds_alternative<map<string, Node>>(*this)) {
+            os << "{\n";
+            const auto& cur_map = (*this).AsMap();
+            for (auto it = cur_map.cbegin(); it != cur_map.cend(); ++it) {
+                os << "\"" << it->first << "\": ";
+                (it->second).Print(os);
+                if (next(it) != cur_map.cend()) {
+                    os << ",";
+                }
+                os << "\n";
+            }
+            os << "}";
+        }
     }
 }

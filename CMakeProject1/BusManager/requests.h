@@ -25,7 +25,8 @@ public:
 		ADD_STOP,
 		ADD_BUS,
 		QUERY_BUS,
-		QUERY_STOP
+		QUERY_STOP,
+		QUERY_ROUTE
 	} Type;
 
 	Request(ERequestType type)
@@ -197,4 +198,28 @@ public:
 
 private:
 	string StopName;
+};
+
+class ReadRouteInfoRequest : public ReadRequest<RouteInfoResponse> {
+public:
+	ReadRouteInfoRequest() : ReadRequest(Request::ERequestType::QUERY_ROUTE) {}
+
+	RouteInfoResponse Process(BusManager& manager) const override {
+		auto response = manager.GetRouteResponse(StopFrom, StopTo);
+		response.SetRequestId(Request_id);
+		return response;
+	}
+
+	void ReadInfo(istream& is) override {
+		throw runtime_error("Not implemented");
+	}
+
+	void ReadInfo(const Node& node) override {
+		StopFrom = node.AsMap().at("from").AsString();
+		StopTo = node.AsMap().at("to").AsString();
+	}
+
+private:
+	string StopFrom;
+	string StopTo;
 };

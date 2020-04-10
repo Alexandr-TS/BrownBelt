@@ -1,5 +1,7 @@
 #pragma once
 
+#include "json.h"
+
 #include <cassert>
 #include <stdexcept>
 #include <vector>
@@ -33,7 +35,8 @@ class Response {
 public:
 	enum class EResponseType {
 		BUS_INFO,
-		STOP_INFO
+		STOP_INFO,
+		ROUTE_INFO
 	} Type;
 
 	Response(EResponseType&& type)
@@ -45,6 +48,18 @@ public:
 	}
 
 	int32_t Request_id = -1;
+};
+
+class RouteInfoResponse : public Response {
+public:
+	RouteInfoResponse() : Response(Response::EResponseType::ROUTE_INFO) {}
+
+	RouteInfoResponse(Json::Node&& node)
+		: Response(Response::EResponseType::ROUTE_INFO)
+		, Info(node)
+	{}
+
+	Json::Node Info;
 };
 
 class BusInfoResponse: public Response {
@@ -171,6 +186,10 @@ public:
 			return StopInfoResponse{ stop_name, nullopt };
 		}
 		return StopInfoResponse{ stop_name, StopInfoResponse::BusesInfo{ iter->second.BusesNames } };
+	}
+
+	RouteInfoResponse GetRouteResponse(const string& stop_from, const string& stop_to) {
+
 	}
 
 	void AddStop(const string& name, Location location, const unordered_map<string, double>& dist_by_stop) {

@@ -13,7 +13,8 @@ const unordered_map<string, Request::ERequestType> ModifyRequestTypeByString = {
 
 const unordered_map<string, Request::ERequestType> ReadRequestTypeByString = {
 	{"Bus", Request::ERequestType::QUERY_BUS},
-	{"Stop", Request::ERequestType::QUERY_STOP}
+	{"Stop", Request::ERequestType::QUERY_STOP},
+	{"Route", Request::ERequestType::QUERY_ROUTE}
 };
 
 RequestHolder CreateRequestHolder(Request::ERequestType type) {
@@ -80,7 +81,7 @@ pair<BusManagerSettings, vector<RequestHolder>> ReadAllRequestsJson() {
 		static_cast<int>(settings_info.at("bus_velocity").AsDouble())
 	);
 
-	return { settings, requests };
+	return { settings, move(requests) };
 }
 
 vector<unique_ptr<Response>> GetResponses(
@@ -111,6 +112,10 @@ vector<unique_ptr<Response>> GetResponses(
 			const auto& request = static_cast<const ReadStopInfoRequest&>(*request_holder);
 			responses.push_back(make_unique<StopInfoResponse>(request.Process(manager)));
 		}
+		else if (request_holder->Type == Request::ERequestType::QUERY_ROUTE) {
+			const auto& request = static_cast<const ReadRouteInfoRequest&>(*request_holder);
+			responses.push_back(make_unique<RouteInfoResponse>(request.Process(manager)));
+		}
 	}
 	return responses;
 }
@@ -131,7 +136,7 @@ void PrintResponsesCout(const vector<unique_ptr<Response>>& responses) {
 				cout << "not found\n";
 			}
 		}
-		else {
+		else if (response_ptr->Type == Response::EResponseType::STOP_INFO) {
 			const auto& response = static_cast<const StopInfoResponse&>(*response_ptr);
 			cout << "Stop " << response.Name << ": ";
 			if (response.Info) {
@@ -149,6 +154,12 @@ void PrintResponsesCout(const vector<unique_ptr<Response>>& responses) {
 			else {
 				cout << "not found\n";
 			}
+		}
+		else if (response_ptr->Type == Response::EResponseType::ROUTE_INFO) {
+			// todo;	
+		}
+		else {
+			throw runtime_error("Not implemented Response to print");
 		}
 	}
 }
@@ -195,7 +206,7 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 int main() {
 	//FILE* file;
 	//freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
-	const auto [settings, requests] = ReadAllRequestsJson();
-	const auto responses = GetResponses(settings, requests);
+	auto requests = ReadAllRequestsJson();
+	const auto responses = GetResponses(requests.first, move(requests.second));
 	PrintResponsesJson(responses);
 }

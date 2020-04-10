@@ -122,7 +122,7 @@ public:
 			BusStopNames.push_back(stop_node.AsString());
 		}
 		if (node_map.at("is_roundtrip").AsDouble() < 0.5) { // false
-			vector<string> reversed_path{ BusStopNames.begin(), prev(BusStopNames.end()) };
+			vector<string> reversed_path{ next(BusStopNames.rbegin()), BusStopNames.rend() };
 			copy(reversed_path.begin(), reversed_path.end(), back_inserter(BusStopNames));
 		}
 	}

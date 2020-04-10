@@ -219,8 +219,8 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 }
 
 int main() {
-	FILE* file;
-	freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
+	//FILE* file;
+	//freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
 	auto requests = ReadAllRequestsJson();
 	const auto responses = GetResponses(requests.first, move(requests.second));
 	PrintResponsesJson(responses);

@@ -15,6 +15,14 @@ using namespace std;
 const double PI = 3.1415926535;
 const double RADIUS = 6371;
 
+class PairStrHasher {
+	size_t operator() (pair<string, string> data) {
+		auto tmp = data.first + "$" + data.second;
+		hash<string> h;
+		return h(tmp);
+	}
+};
+
 struct Location {
 	double Latitude = 0.0;
 	double Longitude = 0.0;
@@ -48,6 +56,7 @@ public:
 		int CntStops;
 		int UniqueStops;
 		double PathLength;
+		double Curvature;
 	};
 
 	BusInfoResponse(const string& name, optional<MetricsInfo>&& info)
@@ -86,24 +95,36 @@ struct Stop {
 struct Bus {
 	Bus() {}
 	
-	Bus(const vector<string>& path, const unordered_map<string, Stop>& stops) {
-		Length = 0;
+	Bus(const vector<string>& path, const unordered_map<string, Stop>& stops, 
+		const unordered_map<string, unordered_map<string, double>>& distances_between_stops) {
+		RouteLength = 0;
+		GeoLength = 0;
 		set<string> unique_stops;
 		for (size_t i = 0; i < path.size(); ++i) {
 			unique_stops.insert(path[i]);
 			if (i) {
-				Length += stops.at(path[i - 1]).StopLocation.Distance(stops.at(path[i]).StopLocation);
+				double geo_dist = stops.at(path[i - 1]).StopLocation.Distance(stops.at(path[i]).StopLocation);
+				GeoLength += geo_dist;
+				if (distances_between_stops.count(path[i - 1]) && 
+					distances_between_stops.at(path[i - 1]).count(path[i])) {
+					RouteLength += distances_between_stops.at(path[i - 1]).at(path[i]);
+				}
+				else {
+					RouteLength += geo_dist;
+				}
 			}
 		}
 		CntUnique = static_cast<int>(unique_stops.size());
 		Stops = path;
 	}
-	double Length;
+	double RouteLength;
+	double GeoLength;
 	int CntUnique;
 	vector<string> Stops;
 
 	BusInfoResponse GetInfo(const string& name) const {
-		return { name, BusInfoResponse::MetricsInfo{static_cast<int>(Stops.size()), CntUnique, Length } };
+		double curvature = RouteLength / GeoLength;
+		return { name, BusInfoResponse::MetricsInfo{static_cast<int>(Stops.size()), CntUnique, RouteLength, curvature } };
 	}
 };
 
@@ -125,12 +146,18 @@ public:
 		return StopInfoResponse{ stop_name, StopInfoResponse::BusesInfo{ iter->second.BusesNames } };
 	}
 
-	void AddStop(const string& name, Location location) {
+	void AddStop(const string& name, Location location, const unordered_map<string, double>& dist_by_stop) {
 		Stops[name] = Stop{ location };
+		for (const auto& [stop_name, dist] : dist_by_stop) {
+			DistancesBetweenStops[name][stop_name] = dist;
+			if (!DistancesBetweenStops.count(stop_name) || !DistancesBetweenStops[stop_name].count(name)) {
+				DistancesBetweenStops[stop_name][name] = dist;
+			}
+		}
 	}
 
 	void AddBus(const string& name, const vector<string>& path) {
-		Buses[name] = Bus(path, Stops);
+		Buses[name] = Bus(path, Stops, DistancesBetweenStops);
 		for (const auto& stop_name : path) {
 			Stops[stop_name].BusesNames.insert(name);
 		}
@@ -139,4 +166,5 @@ public:
 private:
 	unordered_map<string, Stop> Stops;
 	unordered_map<string, Bus> Buses;
+	unordered_map<string, unordered_map<string, double>> DistancesBetweenStops;
 };

@@ -29,7 +29,7 @@ void Trim(string& s) {
 	reverse(s.begin(), s.end());
 }
 
-vector<string> SplitString(string& s, set<char>&& delims) {
+vector<string> SplitString(string& s, set<char>&& delims = {}) {
 	vector<string> ret;
 	string cur = "";
 	for (auto ch : s) {
@@ -80,23 +80,37 @@ public:
 	AddStopRequest() : ModifyRequest(Request::ERequestType::ADD_STOP) {}
 
 	void Process(BusManager& manager) const override {
-		manager.AddStop(Name, StopLocation);
+		manager.AddStop(Name, StopLocation, DistsToStops);
 	}
 
 	void ReadInfo(istream& is) override {
 		string input;
 		getline(is, input);
 		auto info = SplitString(input, set<char>{ ':', ',' });
-		assert((int)info.size() == 3);
 		Name = info[0];
 		stringstream ss;
 		ss << info[1] << " " << info[2];
 		ss >> StopLocation.Latitude >> StopLocation.Longitude;
+		for (size_t i = 3; i < info.size(); ++i) {
+			auto pos = info[i].find('m');
+			assert(pos != string::npos);
+			info[i].insert(info[i].begin() + pos, ' ');
+			stringstream ss;
+			ss << info[i];
+			double dist;
+			string trash;
+			string stop_name;
+			ss >> dist >> trash >> trash;
+			getline(ss, stop_name);
+			stop_name = SplitString(stop_name)[0];
+			DistsToStops[stop_name] = dist;
+		}
 	}
 
 private:
 	Location StopLocation;
 	string Name;
+	unordered_map<string, double> DistsToStops;
 };
 
 class AddBusRequest : public ModifyRequest {
@@ -259,7 +273,8 @@ void PrintResponses(const vector<unique_ptr<Response>>& responses) {
 				cout << response.Info.value().CntStops << " stops on route, " <<
 					response.Info.value().UniqueStops << " unique stops, " <<
 					fixed << setprecision(6) <<
-					response.Info.value().PathLength << " route length\n";
+					response.Info.value().PathLength << " route length, " <<
+					response.Info.value().Curvature << " curvature\n";
 			}
 			else {
 				cout << "not found\n";
@@ -288,8 +303,8 @@ void PrintResponses(const vector<unique_ptr<Response>>& responses) {
 }
 
 int main() {
-	//FILE* file;
-	//freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
+	FILE* file;
+	freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
 	const auto requests = ReadAllRequests();
 	const auto responses = GetResponses(requests);
 	PrintResponses(responses);

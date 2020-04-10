@@ -103,6 +103,8 @@ vector<unique_ptr<Response>> GetResponses(
 		}
 	}
 
+	manager.BuildRoutes();
+
 	for (auto& request_holder : requests) {
 		if (request_holder->Type == Request::ERequestType::QUERY_BUS) {
 			const auto& request = static_cast<const ReadBusInfoRequest&>(*request_holder);
@@ -156,7 +158,7 @@ void PrintResponsesCout(const vector<unique_ptr<Response>>& responses) {
 			}
 		}
 		else if (response_ptr->Type == Response::EResponseType::ROUTE_INFO) {
-			// todo;	
+			throw runtime_error("Not implemented Response to print");
 		}
 		else {
 			throw runtime_error("Not implemented Response to print");
@@ -168,8 +170,9 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 	auto result_vec = vector<Node>();
 
 	for (const auto& response_ptr: responses) {
-		auto cur_node = map<string, Node>{};
+		Node response_node;
 		if (response_ptr->Type == Response::EResponseType::BUS_INFO) {
+			auto cur_node = map<string, Node>{};
 			const auto& response = static_cast<const BusInfoResponse&>(*response_ptr);
 			cur_node["request_id"] = Node(static_cast<double>(response.Request_id));
 			if (response.Info) {
@@ -181,8 +184,10 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 			else {
 				cur_node["error_message"] = Node("not found"s);
 			}
+			response_node = Node(cur_node);
 		}
-		else {
+		else if (response_ptr->Type == Response::EResponseType::STOP_INFO) {
+			auto cur_node = map<string, Node>{};
 			const auto& response = static_cast<const StopInfoResponse&>(*response_ptr);
 			cur_node["request_id"] = Node(static_cast<double>(response.Request_id));
 			if (response.Info) {
@@ -195,8 +200,16 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 			else {
 				cur_node["error_message"] = Node("not found"s);
 			}
+			response_node = Node(cur_node);
 		}
-		result_vec.push_back(Node(cur_node));
+		else if (response_ptr->Type == Response::EResponseType::ROUTE_INFO) {
+			const auto& response = static_cast<const RouteInfoResponse&>(*response_ptr);
+			response_node = response.Info;
+		}
+		else {
+			throw runtime_error("Not implemented Response to print");
+		}
+		result_vec.push_back(response_node);
 	}
 
 	auto result_node = Node(result_vec);
@@ -204,8 +217,8 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 }
 
 int main() {
-	//FILE* file;
-	//freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
+	FILE* file;
+	freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
 	auto requests = ReadAllRequestsJson();
 	const auto responses = GetResponses(requests.first, move(requests.second));
 	PrintResponsesJson(responses);

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "json.h"
+#include "router.h"
 
 #include <cassert>
+#include <memory>
 #include <stdexcept>
 #include <vector>
 #include <algorithm>
@@ -154,7 +156,10 @@ struct Bus {
 
 
 struct BusManagerSettings {
-	BusManagerSettings() {}
+	BusManagerSettings() 
+		: BusWaitTime(0)
+		, BusVelocity(0)
+	{}
 
 	BusManagerSettings(int bus_wait_time, int bus_velocity)
 		: BusWaitTime(bus_wait_time)
@@ -170,27 +175,6 @@ public:
 	BusManager(const BusManagerSettings& settings)
 		: Settings(settings)
 	{}
-
-
-	BusInfoResponse GetBusInfoResponse(const string& bus_name) {
-		auto iter = Buses.find(bus_name);
-		if (iter == Buses.end()) {
-			return { bus_name, nullopt };
-		}
-		return iter->second.GetInfo(bus_name);
-	}
-
-	StopInfoResponse GetStopInfoResponse(const string& stop_name) {
-		auto iter = Stops.find(stop_name);
-		if (iter == Stops.end()) {
-			return StopInfoResponse{ stop_name, nullopt };
-		}
-		return StopInfoResponse{ stop_name, StopInfoResponse::BusesInfo{ iter->second.BusesNames } };
-	}
-
-	RouteInfoResponse GetRouteResponse(const string& stop_from, const string& stop_to) {
-
-	}
 
 	void AddStop(const string& name, Location location, const unordered_map<string, double>& dist_by_stop) {
 		Stops[name] = Stop{ location };
@@ -210,7 +194,114 @@ public:
 		}
 	}
 
+	BusInfoResponse GetBusInfoResponse(const string& bus_name) {
+		auto iter = Buses.find(bus_name);
+		if (iter == Buses.end()) {
+			return { bus_name, nullopt };
+		}
+		return iter->second.GetInfo(bus_name);
+	}
+
+	StopInfoResponse GetStopInfoResponse(const string& stop_name) {
+		auto iter = Stops.find(stop_name);
+		if (iter == Stops.end()) {
+			return StopInfoResponse{ stop_name, nullopt };
+		}
+		return StopInfoResponse{ stop_name, StopInfoResponse::BusesInfo{ iter->second.BusesNames } };
+	}
+
+	RouteInfoResponse GetRouteResponse(const string& stop_from, const string& stop_to) {
+		using namespace Json;
+
+		size_t from_id = StopIdByName[stop_from];
+		size_t to_id = StopIdByName[stop_to];
+		auto route = RouteBuilder->BuildRoute(from_id, to_id);
+		if (!route) {
+			auto node_map = map<string, Node>();
+			node_map["error_message"] = Node("not found"s);
+			return RouteInfoResponse(Node(node_map));
+		}
+
+		auto node_map = map<string, Node>();
+		auto result = route.value();
+		node_map["total_time"] = Node(result.weight);
+		auto node_map_items = vector<Node>();
+		vector<int> edges_ids;
+		for (size_t i = 0; i < result.edge_count; ++i) {
+			auto edge_id = RouteBuilder->GetRouteEdge(result.id, i);
+			auto wait_node_map = map<string, Node>();
+			wait_node_map["time"] = Node(static_cast<double>(Settings.BusWaitTime));
+			wait_node_map["type"] = Node("wait"s);
+			wait_node_map["stop_name"] = Node(Edges[edge_id].StopFrom);
+			node_map_items.push_back(Node(wait_node_map));
+
+			auto ride_node_map = map<string, Node>();
+			ride_node_map["bus"] = Node(Edges[edge_id].BusName);
+			ride_node_map["type"] = Node("bus"s);
+			ride_node_map["time"] = Node(Edges[edge_id].Weight);
+			ride_node_map["span_count"] = Node(Edges[edge_id].SpanCount);
+			node_map_items.push_back(Node(ride_node_map));
+		}
+		node_map["items"] = Node(node_map_items);
+		return RouteInfoResponse(Node(node_map));
+	}
+	
+	void BuildRoutes() {
+		using namespace Graph;
+
+		size_t cur_stop_idx = 0;
+		for (const auto& [name, Stop] : Stops) {
+			StopIdByName[name] = cur_stop_idx++;
+		}
+
+		DirectedWeightedGraph<double> graph(Stops.size());
+
+		map<pair<string, string>, tuple<double, string, int>> best_bus_by_2_stops;
+
+		for (const auto& [bus_name, bus] : Buses) {
+			for (size_t first_pos = 0; first_pos + 1 < bus.Stops.size(); ++first_pos) {
+				double weight = Settings.BusWaitTime;
+				for (size_t second_pos = first_pos + 1; second_pos < bus.Stops.size(); ++second_pos) {
+					weight += DistancesBetweenStops[bus.Stops[second_pos - 1]][bus.Stops[second_pos]] /
+						(Settings.BusVelocity * 1000 / 60.);
+					if (!best_bus_by_2_stops.count({ bus.Stops[first_pos], bus.Stops[second_pos] })) {
+						best_bus_by_2_stops[{bus.Stops[first_pos], bus.Stops[second_pos]}] =
+							make_tuple(weight, bus_name, static_cast<int>(second_pos - first_pos));
+					}
+					else {
+						best_bus_by_2_stops[{bus.Stops[first_pos], bus.Stops[second_pos]}] =
+							min(make_tuple(weight, bus_name, static_cast<int>(second_pos - first_pos)),
+								best_bus_by_2_stops[{bus.Stops[first_pos], bus.Stops[second_pos]}]);
+					}
+				}
+			}
+		}
+
+		for (const auto& el : best_bus_by_2_stops) {
+			const auto& [from_stop, to_stop] = el.first;
+			const auto& [dist, bus_name, span_count] = el.second;
+			Edge<double> edge{ StopIdByName[from_stop], StopIdByName[to_stop], dist };
+			auto edge_id = graph.AddEdge(edge);
+			Edges.push_back({ dist, from_stop, to_stop, bus_name, edge_id, span_count });
+		}
+
+		RouteBuilder = make_unique<Graph::Router<double>>(Router(graph));
+	}
+
 private:
+	struct EdgeInfo {
+		double Weight;
+		string StopFrom;
+		string StopTo;
+		string BusName;
+		size_t EdgeId;
+		int SpanCount;
+	};
+
+	vector<EdgeInfo> Edges;
+	unordered_map<string, size_t> StopIdByName;
+	unique_ptr<Graph::Router<double>> RouteBuilder;
+
 	unordered_map<string, Stop> Stops;
 	unordered_map<string, Bus> Buses;
 	unordered_map<string, unordered_map<string, double>> DistancesBetweenStops;

@@ -15,14 +15,6 @@ using namespace std;
 const double PI = 3.1415926535;
 const double RADIUS = 6371;
 
-class PairStrHasher {
-	size_t operator() (pair<string, string> data) {
-		auto tmp = data.first + "$" + data.second;
-		hash<string> h;
-		return h(tmp);
-	}
-};
-
 struct Location {
 	double Latitude = 0.0;
 	double Longitude = 0.0;
@@ -33,7 +25,6 @@ struct Location {
 		return acos(sin(p1.first) * sin(p2.first) +
 			cos(p1.first) * cos(p2.first) * cos(p1.second - p2.second)) * RADIUS * 1000;
 	}
-
 };
 
 class Response {
@@ -124,7 +115,8 @@ struct Bus {
 
 	BusInfoResponse GetInfo(const string& name) const {
 		double curvature = RouteLength / GeoLength;
-		return { name, BusInfoResponse::MetricsInfo{static_cast<int>(Stops.size()), CntUnique, RouteLength, curvature } };
+		return { name, BusInfoResponse::MetricsInfo{
+			static_cast<int>(Stops.size()), CntUnique, RouteLength, curvature } };
 	}
 };
 

@@ -73,6 +73,13 @@ build BusManager\CMakeFiles\CMakeProject1.dir\main.cpp.obj: CXX_COMPILER__CMakeP
   TARGET_COMPILE_PDB = BusManager\CMakeFiles\CMakeProject1.dir\
   TARGET_PDB = BusManager\CMakeProject1.pdb
 
+build BusManager\CMakeFiles\CMakeProject1.dir\json.cpp.obj: CXX_COMPILER__CMakeProject1 ..\..\..\BusManager\json.cpp || cmake_object_order_depends_target_CMakeProject1
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   -std:c++latest
+  OBJECT_DIR = BusManager\CMakeFiles\CMakeProject1.dir
+  OBJECT_FILE_DIR = BusManager\CMakeFiles\CMakeProject1.dir
+  TARGET_COMPILE_PDB = BusManager\CMakeFiles\CMakeProject1.dir\
+  TARGET_PDB = BusManager\CMakeProject1.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target CMakeProject1
@@ -81,7 +88,7 @@ build BusManager\CMakeFiles\CMakeProject1.dir\main.cpp.obj: CXX_COMPILER__CMakeP
 #############################################
 # Link the executable BusManager\CMakeProject1.exe
 
-build BusManager\CMakeProject1.exe: CXX_EXECUTABLE_LINKER__CMakeProject1 BusManager\CMakeFiles\CMakeProject1.dir\main.cpp.obj
+build BusManager\CMakeProject1.exe: CXX_EXECUTABLE_LINKER__CMakeProject1 BusManager\CMakeFiles\CMakeProject1.dir\main.cpp.obj BusManager\CMakeFiles\CMakeProject1.dir\json.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

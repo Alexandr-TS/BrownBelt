@@ -303,8 +303,8 @@ void PrintResponses(const vector<unique_ptr<Response>>& responses) {
 }
 
 int main() {
-	FILE* file;
-	freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
+	//FILE* file;
+	//freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
 	const auto requests = ReadAllRequests();
 	const auto responses = GetResponses(requests);
 	PrintResponses(responses);

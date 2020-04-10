@@ -1,4 +1,5 @@
 #include "json.h"
+#include <cassert>
 
 using namespace std;
 
@@ -25,12 +26,40 @@ namespace Json {
         return Node(move(result));
     }
 
-    Node LoadInt(istream& input) {
-        int result = 0;
+    Node LoadDouble(istream& input) {
+        double result = 0;
+        if (input.peek() == 't') {
+            string value;
+            for (int i = 0; i < 4; ++i) {
+                value += static_cast<char>(input.get());
+            }
+            assert(value == "true");
+            return Node(1.0);
+        }
+
+        if (input.peek() == 'f') {
+            string value;
+            for (int i = 0; i < 5; ++i) {
+                value += static_cast<char>(input.get());
+            }
+            assert(value == "false");
+            return Node(0.0);
+        }
+
         while (isdigit(input.peek())) {
             result *= 10;
-            result += input.get() - '0';
+            result += static_cast<double>(input.get() - static_cast<int>('0'));
         }
+
+        if (input.peek() == '.') {
+            double coef = 1.0;
+            input.get();
+			while (isdigit(input.peek())) {
+                coef /= 10;
+                result += coef * static_cast<double>(input.get() - static_cast<int>('0'));
+			}
+        }
+
         return Node(result);
     }
 
@@ -71,7 +100,7 @@ namespace Json {
         }
         else {
             input.putback(c);
-            return LoadInt(input);
+            return LoadDouble(input);
         }
     }
 

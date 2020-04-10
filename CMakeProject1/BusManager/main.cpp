@@ -31,7 +31,7 @@ RequestHolder CreateRequestHolder(Request::ERequestType type) {
 	}
 }
 
-void ReadRequests(vector<RequestHolder>& requests, 
+void ReadRequestsCin(vector<RequestHolder>& requests, 
 	const unordered_map<string, Request::ERequestType>& RequestTypeByString) {
 	int queries_count;
 	cin >> queries_count;
@@ -47,8 +47,8 @@ void ReadRequests(vector<RequestHolder>& requests,
 
 vector<RequestHolder> ReadAllRequestsCin() {
 	vector<RequestHolder> requests;
-	ReadRequests(requests, ModifyRequestTypeByString);
-	ReadRequests(requests, ReadRequestTypeByString);
+	ReadRequestsCin(requests, ModifyRequestTypeByString);
+	ReadRequestsCin(requests, ReadRequestTypeByString);
 	return requests;
 }
 

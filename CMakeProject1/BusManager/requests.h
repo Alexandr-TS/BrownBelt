@@ -1,5 +1,6 @@
 #pragma once
 #include "manager.h"
+#include "json.h"
 
 #include <algorithm>
 #include <iostream>
@@ -16,6 +17,7 @@
 #include <ctime>
 
 using namespace std;
+using namespace Json;
 
 class Request {
 public:
@@ -30,7 +32,8 @@ public:
 		: Type(type)
 	{}
 
-	virtual void ReadInfo(istream& is) = 0;
+	virtual void ReadInfo(istream&) = 0;
+	virtual void ReadInfo(const Node&) = 0;
 };
 
 using RequestHolder = unique_ptr<Request>;
@@ -71,6 +74,10 @@ public:
 			stop_name = StringUtils::SplitString(stop_name)[0];
 			DistsToStops[stop_name] = dist;
 		}
+	}
+
+	void ReadInfo(const Node& node) {
+		
 	}
 
 private:

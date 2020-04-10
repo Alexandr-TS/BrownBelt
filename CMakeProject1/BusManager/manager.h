@@ -37,6 +37,12 @@ public:
 	Response(EResponseType&& type)
 		: Type(type)
 	{}
+
+	void SetRequestId(int32_t id) {
+		Request_id = id;
+	}
+
+	int32_t Request_id = -1;
 };
 
 class BusInfoResponse: public Response {

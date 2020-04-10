@@ -147,9 +147,10 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 	auto result_vec = vector<Node>();
 
 	for (const auto& response_ptr: responses) {
+		auto cur_node = map<string, Node>{};
 		if (response_ptr->Type == Response::EResponseType::BUS_INFO) {
 			const auto& response = static_cast<const BusInfoResponse&>(*response_ptr);
-			auto cur_node = map<string, Node>{};
+			cur_node["request_id"] = Node(static_cast<double>(response.Request_id));
 			if (response.Info) {
 				cur_node["stop_count"] = Node(static_cast<double>(response.Info.value().CntStops));
 				cur_node["unique_stop_count"] = Node(static_cast<double>(response.Info.value().UniqueStops));
@@ -159,11 +160,10 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 			else {
 				cur_node["error_message"] = Node("not found"s);
 			}
-			result_vec.push_back(Node(cur_node));
 		}
 		else {
 			const auto& response = static_cast<const StopInfoResponse&>(*response_ptr);
-			auto cur_node = map<string, Node>{};
+			cur_node["request_id"] = Node(static_cast<double>(response.Request_id));
 			if (response.Info) {
 				auto buses_vector = vector<Node>();
 				for (const auto& bus_name : response.Info.value().Buses) {
@@ -174,8 +174,8 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 			else {
 				cur_node["error_message"] = Node("not found"s);
 			}
-			result_vec.push_back(Node(cur_node));
 		}
+		result_vec.push_back(Node(cur_node));
 	}
 
 	auto result_node = Node(result_vec);

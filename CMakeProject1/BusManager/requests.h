@@ -137,6 +137,9 @@ class ReadRequest : public Request {
 public:
     using Request::Request;
 	virtual ResultType Process(BusManager& manager) const = 0;
+
+protected:
+	int32_t Request_id = -1;
 };
 
 class ReadBusInfoRequest : public ReadRequest<BusInfoResponse> {
@@ -144,7 +147,9 @@ public:
 	ReadBusInfoRequest() : ReadRequest(Request::ERequestType::QUERY_BUS) {}
 
 	BusInfoResponse Process(BusManager& manager) const override {
-		return manager.GetBusInfoResponse(BusName);
+		auto response = manager.GetBusInfoResponse(BusName);
+		response.SetRequestId(Request_id);
+		return response;
 	}
 
 	void ReadInfo(istream& is) override {
@@ -157,6 +162,7 @@ public:
 
 	void ReadInfo(const Node& node) override {
 		BusName = node.AsMap().at("name").AsString();
+		Request_id = static_cast<int>(node.AsMap().at("id").AsDouble());
 	}
 
 private:
@@ -168,7 +174,9 @@ public:
 	ReadStopInfoRequest() : ReadRequest(Request::ERequestType::QUERY_STOP) {}
 
 	StopInfoResponse Process(BusManager& manager) const override {
-		return manager.GetStopInfoResponse(StopName);
+		auto response = manager.GetStopInfoResponse(StopName);
+		response.SetRequestId(Request_id);
+		return response;
 	}
 
 	void ReadInfo(istream& is) override {
@@ -181,6 +189,7 @@ public:
 
 	void ReadInfo(const Node& node) override {
 		StopName = node.AsMap().at("name").AsString();
+		Request_id = static_cast<int>(node.AsMap().at("id").AsDouble());
 	}
 
 private:

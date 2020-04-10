@@ -125,9 +125,9 @@ struct Bus {
 		CntUnique = static_cast<int>(unique_stops.size());
 		Stops = path;
 	}
-	double RouteLength;
-	double GeoLength;
-	int CntUnique;
+	double RouteLength = 0;
+	double GeoLength = 0;
+	int CntUnique = 0;
 	vector<string> Stops;
 
 	BusInfoResponse GetInfo(const string& name) const {
@@ -137,8 +137,26 @@ struct Bus {
 	}
 };
 
+
+struct BusManagerSettings {
+	BusManagerSettings() {}
+
+	BusManagerSettings(int bus_wait_time, int bus_velocity)
+		: BusWaitTime(bus_wait_time)
+		, BusVelocity(bus_velocity)
+	{}
+
+	int BusWaitTime;
+	int BusVelocity;
+};
+
 class BusManager {
 public:
+	BusManager(const BusManagerSettings& settings)
+		: Settings(settings)
+	{}
+
+
 	BusInfoResponse GetBusInfoResponse(const string& bus_name) {
 		auto iter = Buses.find(bus_name);
 		if (iter == Buses.end()) {
@@ -177,4 +195,5 @@ private:
 	unordered_map<string, Stop> Stops;
 	unordered_map<string, Bus> Buses;
 	unordered_map<string, unordered_map<string, double>> DistancesBetweenStops;
+	BusManagerSettings Settings;
 };

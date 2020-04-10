@@ -56,7 +56,7 @@ namespace Json {
 
         while (isdigit(input.peek())) {
             result *= 10;
-            result += static_cast<double>(input.get() - static_cast<int>('0'));
+            result += static_cast<double>(input.get() - static_cast<long long>('0'));
         }
 
         if (input.peek() == '.') {
@@ -64,7 +64,7 @@ namespace Json {
             input.get();
 			while (isdigit(input.peek())) {
                 coef /= 10;
-                result += coef * static_cast<double>(input.get() - static_cast<int>('0'));
+                result += coef * static_cast<double>(input.get() - static_cast<long long>('0'));
 			}
         }
 

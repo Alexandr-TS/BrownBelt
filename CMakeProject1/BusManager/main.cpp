@@ -61,7 +61,8 @@ void ReadRequestsJson(vector<RequestHolder>& requests, const Node& node,
 	}
 }
 
-vector<RequestHolder> ReadAllRequestsJson() {
+
+pair<BusManagerSettings, vector<RequestHolder>> ReadAllRequestsJson() {
 	auto document = Load(cin);
 	vector<RequestHolder> requests;
 
@@ -73,11 +74,18 @@ vector<RequestHolder> ReadAllRequestsJson() {
 	const auto& read_requests = document.GetRoot().AsMap().at("stat_requests");
 	ReadRequestsJson(requests, read_requests, ReadRequestTypeByString);
 
-	return requests;
+	const auto& settings_info = document.GetRoot().AsMap().at("routing_settings").AsMap();
+	auto settings = BusManagerSettings(
+		static_cast<int>(settings_info.at("bus_wait_time").AsDouble()),
+		static_cast<int>(settings_info.at("bus_velocity").AsDouble())
+	);
+
+	return { settings, requests };
 }
 
-vector<unique_ptr<Response>> GetResponses(const vector<RequestHolder>& requests) {
-	BusManager manager;
+vector<unique_ptr<Response>> GetResponses(
+	const BusManagerSettings& settings, const vector<RequestHolder>& requests) {
+	BusManager manager(settings);
 	vector<unique_ptr<Response>> responses;
 	
 	for (auto& request_holder : requests) {
@@ -187,7 +195,7 @@ void PrintResponsesJson(const vector<unique_ptr<Response>>& responses) {
 int main() {
 	//FILE* file;
 	//freopen_s(&file, "C:\\Users\\Admin\\source\\repos\\Alexandr-TS\\CourseraBrownBelt\\CMakeProject1\\BusManager\\a.in", "r", stdin);
-	const auto requests = ReadAllRequestsJson();
-	const auto responses = GetResponses(requests);
+	const auto [settings, requests] = ReadAllRequestsJson();
+	const auto responses = GetResponses(settings, requests);
 	PrintResponsesJson(responses);
 }
